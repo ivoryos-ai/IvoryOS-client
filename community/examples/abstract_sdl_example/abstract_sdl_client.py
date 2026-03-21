@@ -40,16 +40,16 @@ if __name__ == '__main__':
     client.load_workflow_script(workflow_name='example_workflow')
 
     print('execute loaded workflow 4 times split into batches of 2 with specific parameters')
-    response = client.run_workflow_kwargs(kwargs_list=[{'param_1': '1',  # run 1 - batch 1 repeat 1
+    response = client.run_workflow_kwargs(kwargs_list=[{'param_1': '1',  # run 1 - iteration 1 batch 1
                                                         'param_2': '1',
                                                         },
-                                                       {'param_1': '2',  # run 2 - batch 1 repeat 2
+                                                       {'param_1': '2',  # run 2 - iteration 1 batch 2
                                                         'param_2': '2',
                                                         },
-                                                       {'param_1': '3',  # run 3 - batch 2 repeat 1
+                                                       {'param_1': '3',  # run 3 - iteration 2 batch 1
                                                         'param_2': '3',
                                                         },
-                                                       {'param_1': '4',  # run 4 - batch 2 repeat 2
+                                                       {'param_1': '4',  # run 4 - iteration 2 batch 2
                                                         'param_2': '4',
                                                         },
                                                        ],
