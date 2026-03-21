@@ -1,3 +1,4 @@
+import time
 from typing import Optional, Dict, List, Any
 import httpx
 from ivoryos_client.exceptions import (
@@ -316,6 +317,7 @@ class IvoryosClient:
                 json={"kwargs": kwargs_list, "batch_size": batch_size}
             )
             if resp.status_code == httpx.codes.OK:
+                time.sleep(1)  # need short wait to ensure ivoryOS server saves data in the database so getting the workflow data is accurate
                 return resp.json()
             else:
                 raise WorkflowError(f"Failed to start workflow execution: {resp.status_code}")
@@ -471,6 +473,16 @@ class IvoryosClient:
             if isinstance(e, (AuthenticationError, ConnectionError, WorkflowError)):
                 raise
             raise WorkflowError(f"Error listing workflow data: {e}") from e
+
+    def get_last_workflow_run_id(self, workflow_name: str = '') -> int:
+        """
+        Get last workflow run id based on the workflow name. If no name is provided the get the last workflow tha was
+        run
+        """
+        workflow_data = self.list_workflow_data(workflow_name=workflow_name)
+        workflow_run_data_dict = workflow_data['workflow_data']
+        last_workflow_run_id = list(workflow_run_data_dict.keys())[-1]
+        return int(last_workflow_run_id)
 
     def load_workflow_data(self, workflow_id: int):
         """
