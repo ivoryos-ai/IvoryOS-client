@@ -284,12 +284,14 @@ class IvoryosClient:
         """
         try:
             self._check_authentication()
+            payload = {}
+            if repeat_time:
+                payload["repeat"] = str(repeat_time)
+            if batch_size:
+                payload["batch_size"] = str(batch_size)
             resp = self.client.post(
                 f"{self.url}/executions/config",
-                json={
-                    "repeat": str(repeat_time) if repeat_time is not None else None,
-                    "batch_size": batch_size if repeat_time is not None else None
-                }
+                json=payload
             )
             if resp.status_code == httpx.codes.OK:
                 return resp.json()
