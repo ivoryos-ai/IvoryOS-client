@@ -21,6 +21,8 @@ if __name__ == '__main__':
     print(platform_info)
     execution_status = client.get_execution_status()
     print(execution_status)
+    execution_queue = client.get_queue()
+    print(execution_queue)
 
     # ------------------
 

@@ -73,6 +73,25 @@ class IvoryosClient:
         except Exception as e:
             raise IvoryosError(f"Failed to get platform info: {e}") from e
 
+    def get_queue(self) -> List:
+        """
+        Get workflow queue
+
+        Returns:
+            List of queued workflows
+        """
+        try:
+            self._check_authentication()
+            resp = self.client.get(f"{self.url}/executions/queue")
+            if resp.status_code == httpx.codes.OK:
+                return resp.json()
+            else:
+                raise WorkflowError(f"Failed to get executions queue: {resp.status_code}")
+        except Exception as e:
+            if isinstance(e, (AuthenticationError, ConnectionError, WorkflowError)):
+                raise
+            raise WorkflowError(f"Error getting queue: {e}") from e
+
     def get_execution_status(self):
         """
         Get workflow execution status
