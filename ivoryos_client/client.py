@@ -11,7 +11,7 @@ from ivoryos_client.exceptions import (
 class IvoryosClient:
     """Client for interacting with IvoryOS API"""
 
-    def __init__(self, url: str, username: str, password: str):
+    def __init__(self, url: str, username: str, password: str, timeout: Optional[float] = None):
         """
         Initialize IvoryOS client
 
@@ -23,7 +23,7 @@ class IvoryosClient:
         """
         self.url = url.rstrip('/')
         self.login_data = {"username": username, "password": password}
-        self.client = httpx.Client(follow_redirects=True)
+        self.client = httpx.Client(follow_redirects=True, timeout=timeout)
 
     def __enter__(self):
         """Context manager entry"""
