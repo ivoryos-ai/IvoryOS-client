@@ -13,7 +13,7 @@ if __name__ == '__main__':
         url="http://localhost:8000/ivoryos",
         username="admin",
         password="admin",
-        # timeout=None # todo add in later? if none, wait for tasks to finish execution, if provided then error if task doesnt finish within the timeout time
+        timeout=None
     )
 
     print('basic calls')
