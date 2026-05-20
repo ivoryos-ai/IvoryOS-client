@@ -36,6 +36,8 @@ with IvoryosClient(url="http://localhost:8000/ivoryos", username="admin", passwo
     print(result)
 ```
 
+You can also check out examples in [community/examples](community/examples)
+
 ## Features
 
 - **Task Execution**: Execute robot tasks with parameters
