@@ -1,3 +1,4 @@
+import time
 from typing import Optional, Dict, List, Any
 import httpx
 from ivoryos_client.exceptions import (
@@ -71,6 +72,25 @@ class IvoryosClient:
             )
         except Exception as e:
             raise IvoryosError(f"Failed to get platform info: {e}") from e
+
+    def get_queue(self) -> List:
+        """
+        Get workflow queue
+
+        Returns:
+            List of queued workflows
+        """
+        try:
+            self._check_authentication()
+            resp = self.client.get(f"{self.url}/executions/queue")
+            if resp.status_code == httpx.codes.OK:
+                return resp.json()
+            else:
+                raise WorkflowError(f"Failed to get executions queue: {resp.status_code}")
+        except Exception as e:
+            if isinstance(e, (AuthenticationError, ConnectionError, WorkflowError)):
+                raise
+            raise WorkflowError(f"Error getting queue: {e}") from e
 
     def get_execution_status(self):
         """
@@ -283,12 +303,14 @@ class IvoryosClient:
         """
         try:
             self._check_authentication()
+            payload = {}
+            if repeat_time:
+                payload["repeat"] = str(repeat_time)
+            if batch_size:
+                payload["batch_size"] = str(batch_size)
             resp = self.client.post(
                 f"{self.url}/executions/config",
-                json={
-                    "repeat": str(repeat_time) if repeat_time is not None else None,
-                    "batch_size": batch_size if repeat_time is not None else None
-                }
+                json=payload
             )
             if resp.status_code == httpx.codes.OK:
                 return resp.json()
@@ -316,6 +338,7 @@ class IvoryosClient:
                 json={"kwargs": kwargs_list, "batch_size": batch_size}
             )
             if resp.status_code == httpx.codes.OK:
+                time.sleep(1)  # need short wait to ensure IvoryOS server saves data in the database so getting the workflow data is accurate
                 return resp.json()
             else:
                 raise WorkflowError(f"Failed to start workflow execution: {resp.status_code}")
@@ -471,6 +494,16 @@ class IvoryosClient:
             if isinstance(e, (AuthenticationError, ConnectionError, WorkflowError)):
                 raise
             raise WorkflowError(f"Error listing workflow data: {e}") from e
+
+    def get_last_workflow_run_id(self, workflow_name: str = '') -> int:
+        """
+        Get last workflow run id based on the workflow name. If no name is provided the get the last workflow tha was
+        run
+        """
+        workflow_data = self.list_workflow_data(workflow_name=workflow_name)
+        workflow_run_data_dict = workflow_data['workflow_data']
+        last_workflow_run_id = list(workflow_run_data_dict.keys())[-1]
+        return int(last_workflow_run_id)
 
     def load_workflow_data(self, workflow_id: int):
         """
