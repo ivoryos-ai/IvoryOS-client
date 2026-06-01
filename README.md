@@ -57,8 +57,10 @@ IvoryosClient(url, username, password, timeout=30.0)
 
 ### Task Operations
 
+- `get_platform_info()` - Get platform information and available functions
 - `execute_task(component, method, kwargs=None)` - Execute a task
 - `get_execution_status()` - Get current execution status
+- `get_task_status(task_id)` - Get task execution output by task ID
 
 ### Workflow Script Operations
 
@@ -68,9 +70,10 @@ IvoryosClient(url, username, password, timeout=30.0)
 
 ### Workflow Execution
 
-- `run_workflow_repeat(repeat_time=None)` - Run workflow with simple repeat
-- `run_workflow_kwargs(kwargs_list=None)` - Run workflow with parameter sets
-- `run_workflow_campaign(parameters, objectives, repeat=25, parameter_constraints=None)` - Run optimization campaign
+- `run_workflow_repeat(repeat_time=None, batch_size=None)` - Run workflow with simple repeat
+- `run_workflow_kwargs(kwargs_list=None, batch_size=1)` - Run workflow with parameter sets
+- `run_workflow_campaign(optimizer_type, parameters, objectives, repeat=25, batch_size=1, steps={}, parameter_constraints=None, existing_data=None)` - Run optimization campaign
+- `get_queue()` - Get workflow queue
 
 ### Workflow Control
 
@@ -81,6 +84,7 @@ IvoryosClient(url, username, password, timeout=30.0)
 ### Data Operations
 
 - `list_workflow_data(workflow_name='')` - List workflow execution data
+- `get_last_workflow_run_id(workflow_name='')` - Get the most recent workflow run ID
 - `load_workflow_data(workflow_id)` - Load specific workflow data
 
 ## Exception Handling

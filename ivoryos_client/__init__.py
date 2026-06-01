@@ -7,7 +7,7 @@ from .exceptions import (
     TaskError,
 )
 
-__version__ = "0.2.9"  # update with each release
+__version__ = "0.2.10"  # update with each release
 
 __all__ = [
     "IvoryosClient",

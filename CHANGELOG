@@ -1,7 +1,0 @@
-## v0.2.0
-- refactoring ivoryos client
-
-## v0.1.2
-
-- Add error handling for ivoryOS not running
-- Add return in generated code
