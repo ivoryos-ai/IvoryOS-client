@@ -147,6 +147,53 @@ class IvoryosClient:
                 raise
             raise TaskError(f"Error executing task: {e}") from e
 
+    def get_task_status(self, task_id: int):
+        """
+        Get single task execution status by ID
+
+        Args:
+            task_id: ID of the task
+
+        Returns:
+            Dictionary containing task status
+        """
+        try:
+            self._check_authentication()
+            resp = self.client.get(f"{self.url}/instruments/task/{task_id}")
+            if resp.status_code == httpx.codes.OK:
+                return resp.json()
+            elif resp.status_code == httpx.codes.NOT_FOUND:
+                raise TaskError(f"Task {task_id} not found")
+            else:
+                raise TaskError(f"Failed to get task status: {resp.status_code}")
+        except Exception as e:
+            if isinstance(e, (AuthenticationError, ConnectionError, TaskError)):
+                raise
+            raise TaskError(f"Error getting task status: {e}") from e
+
+    def wait_for_task(self, task_id: int, timeout: Optional[float] = None, poll_interval: float = 1.0):
+        """
+        Wait for a single task to finish and return its result.
+
+        Args:
+            task_id: ID of the task
+            timeout: Maximum time to wait in seconds
+            poll_interval: Time between polling requests in seconds
+
+        Returns:
+            Dictionary containing task result
+        """
+        start_time = time.time()
+        while True:
+            if timeout is not None and (time.time() - start_time) > timeout:
+                raise TaskError(f"Timeout waiting for task {task_id}")
+
+            task_data = self.get_task_status(task_id)
+            if task_data.get("end_time") is not None:
+                return task_data
+
+            time.sleep(poll_interval)
+
     def list_workflow_scripts(self, search_key: str = '', deck_name: str = ''):
         """
         List workflow scripts
