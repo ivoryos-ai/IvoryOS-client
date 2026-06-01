@@ -1,4 +1,5 @@
 ## v0.2.10
+- requires IvoryOS >=1.6.2
 - add `get_task_status`
 - add `get_queue` and `get_last_workflow_run_id`
 - fix workflow repeat payload
