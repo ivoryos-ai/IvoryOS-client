@@ -35,6 +35,10 @@ if __name__ == '__main__':
                                            'rate_ml_per_minute': '3.5',
                                            })
     print(response)
+    task_id = response['task_id']
+    print(f'task status for workflow id: {task_id}')
+    task_status_data = client.get_task_status(task_id)
+    print(task_status_data)
 
     # ------------------
 
