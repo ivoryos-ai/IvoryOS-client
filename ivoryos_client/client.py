@@ -111,7 +111,7 @@ class IvoryosClient:
                 raise
             raise WorkflowError(f"Error getting workflow status: {e}") from e
 
-    def execute_task(self, component: str, method: str, kwargs: Optional[Dict[str, Any]] = None):
+    def execute_task(self, component: str, method: str, kwargs: Optional[Dict[str, Any]] = None, wait: bool = False):
         """
         Execute a robot task
 
@@ -119,9 +119,12 @@ class IvoryosClient:
             component: Component name (e.g., 'sdl')
             method: Method name (e.g., 'dose_solid')
             kwargs: Method keyword arguments
+            wait: if wait is true, then the call is synchronous, waiting for it to complete, else then asynchronous
 
         Returns:
             Task execution result
+            If wait is True then return is Dict with keys output and success, e.g. {'output': 1.5, 'success': True}
+            If wait is False then return is Dict with keys status and task_id, e.g. {'status': 'task started', 'task_id': 79}
         """
         try:
             self._check_authentication()
@@ -135,7 +138,7 @@ class IvoryosClient:
                 raise TaskError(f"Component {component} does not exist. Available: {list(snapshot.keys())}")
 
             kwargs["hidden_name"] = method
-            kwargs["hidden_wait"] = False
+            kwargs["hidden_wait"] = wait
 
             resp = self.client.post(f"{self.url}/instruments/{component}", json=kwargs)
             if resp.status_code == httpx.codes.OK:
@@ -380,6 +383,7 @@ class IvoryosClient:
         """
         try:
             self._check_authentication()
+            kwargs_list = kwargs_list if kwargs_list else [] 
             resp = self.client.post(
                 f"{self.url}/executions/config",
                 json={"kwargs": kwargs_list, "batch_size": batch_size}
