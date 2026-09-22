@@ -42,12 +42,11 @@ if __name__ == '__main__':
     print(f'task status for workflow id: {task_id}')
     task_status_data = client.get_task_status(task_id)
     print(task_status_data)
-    # # todo there is a bug now in ivoryos where even if wait is false, ivoryos will still run things synchronously
-    # print('wait for task to finish')
-    # client.wait_for_task(task_id=task_id)
-    # print(f'task status after wait for task id: {task_id}')
-    # task_status_data = client.get_task_status(task_id)
-    # print(task_status_data)
+    print('wait for task to finish')
+    client.wait_for_task(task_id=task_id)
+    print(f'task status after wait for task id: {task_id}')
+    task_status_data = client.get_task_status(task_id)
+    print(task_status_data)
 
     print('Synchronous call, where wait is True')
     response = client.execute_task(component='deck.sdl',
