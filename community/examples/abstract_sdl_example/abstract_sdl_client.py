@@ -28,20 +28,20 @@ if __name__ == '__main__':
 
     print('example execute task, you will see in the ivoryOS interface compile/run tab logging panel that it will '
           'run the following task, and the execution will wait for the task to finish')
-    # print('Asynchronous call, where wait is False')
-    # response = client.execute_task(component='deck.sdl',
-    #                                method='dose_solvent',
-    #                                kwargs={'solvent_name': 'Ethanol',
-    #                                        'amount_in_ml': '2.5',
-    #                                        'rate_ml_per_minute': '3.5',
-    #                                        },
-    #                                wait=False,
-    #                                )
-    # print(response)
-    # task_id = response['task_id']
-    # print(f'task status for workflow id: {task_id}')
-    # task_status_data = client.get_task_status(task_id)
-    # print(task_status_data)
+    print('Asynchronous call, where wait is False')
+    response = client.execute_task(component='deck.sdl',
+                                   method='dose_solvent',
+                                   kwargs={'solvent_name': 'Ethanol',
+                                           'amount_in_ml': '2.5',
+                                           'rate_ml_per_minute': '3.5',
+                                           },
+                                   wait=False,
+                                   )
+    print(response)
+    task_id = response['task_id']
+    print(f'task status for workflow id: {task_id}')
+    task_status_data = client.get_task_status(task_id)
+    print(task_status_data)
     # # todo there is a bug now in ivoryos where even if wait is false, ivoryos will still run things synchronously
     # print('wait for task to finish')
     # client.wait_for_task(task_id=task_id)
