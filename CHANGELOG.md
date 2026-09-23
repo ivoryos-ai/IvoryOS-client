@@ -1,3 +1,9 @@
+## v0.2.11
+- add `wait` to `execute_task` (default `True`): wait for the task and return its output, or `wait=False` to return the task id right away
+- `execute_task` no longer modifies the caller's `kwargs` dict
+- `run_workflow_kwargs` without kwargs no longer raises a server error; use `run_workflow_repeat` for workflows without parameters
+- document `wait`, `get_task_status` and `wait_for_task`; update example
+
 ## v0.2.10
 - requires IvoryOS >=1.6.2
 - add `get_task_status`
