@@ -128,8 +128,8 @@ class IvoryosClient:
         """
         try:
             self._check_authentication()
-            if kwargs is None:
-                kwargs = {}
+            # copy so the caller's dict does not pick up the hidden_* fields
+            kwargs = dict(kwargs) if kwargs else {}
 
             snapshot = self.client.get(f"{self.url}/instruments").json()
             # component = component if component.startswith("deck.") else f"deck.{component}"
@@ -383,7 +383,7 @@ class IvoryosClient:
         """
         try:
             self._check_authentication()
-            kwargs_list = kwargs_list if kwargs_list else [] 
+            kwargs_list = kwargs_list if kwargs_list else []
             resp = self.client.post(
                 f"{self.url}/executions/config",
                 json={"kwargs": kwargs_list, "batch_size": batch_size}

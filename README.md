@@ -31,9 +31,13 @@ with IvoryosClient(url="http://localhost:8000/ivoryos", username="admin", passwo
     status = client.get_execution_status()
     print(status)
     
-    # Execute a task
-    result = client.execute_task("sdl", "dose_solid", {"amount_in_mg": "5"})
-    print(result)
+    # Execute a task and wait for its output
+    result = client.execute_task("sdl", "dose_solid", {"amount_in_mg": "5"}, wait=True)
+    print(result)  # {'success': True, 'output': ...}
+
+    # Or start it in the background and wait on the task id later
+    started = client.execute_task("sdl", "dose_solid", {"amount_in_mg": "5"})
+    print(client.wait_for_task(started["task_id"], timeout=600))
 ```
 
 You can also check out examples in [community/examples](community/examples)
@@ -52,15 +56,20 @@ You can also check out examples in [community/examples](community/examples)
 ### Client Initialization
 
 ```python
-IvoryosClient(url, username, password, timeout=30.0)
+IvoryosClient(url, username, password, timeout=None)
 ```
+
+`timeout` is the HTTP request timeout in seconds (`None` = no timeout). Keep it longer than your longest task if you use `execute_task(..., wait=True)`.
 
 ### Task Operations
 
 - `get_platform_info()` - Get platform information and available functions
-- `execute_task(component, method, kwargs=None)` - Execute a task
+- `execute_task(component, method, kwargs=None, wait=False)` - Execute a task. `wait=True` blocks until it finishes and returns `{'success': ..., 'output': ...}`; `wait=False` returns `{'status': 'task started', 'task_id': ...}` right away (or a `'busy'` status if another task/workflow is running)
 - `get_execution_status()` - Get current execution status
-- `get_task_status(task_id)` - Get task execution output by task ID
+- `get_task_status(task_id)` - Get task execution output by task ID (`end_time` is `None` while running; failures are in `run_error`)
+- `wait_for_task(task_id, timeout=None, poll_interval=1.0)` - Poll until the task finishes and return its record
+
+> `wait=False` + `wait_for_task` needs an ivoryOS server that includes the background-task fix; on older servers (<= 1.6.12) use `wait=True`.
 
 ### Workflow Script Operations
 
