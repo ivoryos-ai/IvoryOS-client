@@ -32,7 +32,7 @@ with IvoryosClient(url="http://localhost:8000/ivoryos", username="admin", passwo
     print(status)
     
     # Execute a task and wait for its output
-    result = client.execute_task("sdl", "dose_solid", {"amount_in_mg": "5"}, wait=True)
+    result = client.execute_task("sdl", "dose_solid", {"amount_in_mg": "5"})
     print(result)  # {'success': True, 'output': ...}
 ```
 
@@ -60,12 +60,12 @@ IvoryosClient(url, username, password, timeout=None)
 ### Task Operations
 
 - `get_platform_info()` - Get platform information and available functions
-- `execute_task(component, method, kwargs=None, wait=False)` - Execute a task. `wait=True` blocks until it finishes and returns `{'success': ..., 'output': ...}`; `wait=False` returns `{'status': 'task started', 'task_id': ...}` right away (or a `'busy'` status if another task/workflow is running)
+- `execute_task(component, method, kwargs=None, wait=True)` - Execute a task. `wait=True` (default) blocks until it finishes and returns `{'success': ..., 'output': ...}`; `wait=False` returns `{'status': 'task started', 'task_id': ...}` right away (or a `'busy'` status if another task/workflow is running)
 - `get_execution_status()` - Get current execution status
 - `get_task_status(task_id)` - Get task execution output by task ID (`end_time` is `None` while running; failures are in `run_error`)
 - `wait_for_task(task_id, timeout=None, poll_interval=1.0)` - Poll until the task finishes and return its record
 
-> On current ivoryOS versions a `wait=False` task does not get its output recorded, so `wait_for_task` can't return it (and on <= 1.6.12 it never finishes). Use `wait=True` when you need the result.
+> On current ivoryOS versions a `wait=False` task does not get its output recorded, so `wait_for_task` can't return it (and on <= 1.6.12 it never finishes), and `async def` instrument methods are cancelled partway. Use `wait=True` (the default).
 
 ### Workflow Script Operations
 

@@ -111,7 +111,7 @@ class IvoryosClient:
                 raise
             raise WorkflowError(f"Error getting workflow status: {e}") from e
 
-    def execute_task(self, component: str, method: str, kwargs: Optional[Dict[str, Any]] = None, wait: bool = False):
+    def execute_task(self, component: str, method: str, kwargs: Optional[Dict[str, Any]] = None, wait: bool = True):
         """
         Execute a robot task
 
@@ -119,7 +119,7 @@ class IvoryosClient:
             component: Component name (e.g., 'sdl')
             method: Method name (e.g., 'dose_solid')
             kwargs: Method keyword arguments
-            wait: if wait is true, then the call is synchronous, waiting for it to complete, else then asynchronous
+            wait: if wait is true (default), then the call is synchronous, waiting for it to complete, else then asynchronous
 
         Returns:
             Task execution result
