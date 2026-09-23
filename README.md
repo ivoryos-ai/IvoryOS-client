@@ -34,10 +34,6 @@ with IvoryosClient(url="http://localhost:8000/ivoryos", username="admin", passwo
     # Execute a task and wait for its output
     result = client.execute_task("sdl", "dose_solid", {"amount_in_mg": "5"}, wait=True)
     print(result)  # {'success': True, 'output': ...}
-
-    # Or start it in the background and wait on the task id later
-    started = client.execute_task("sdl", "dose_solid", {"amount_in_mg": "5"})
-    print(client.wait_for_task(started["task_id"], timeout=600))
 ```
 
 You can also check out examples in [community/examples](community/examples)
@@ -69,7 +65,7 @@ IvoryosClient(url, username, password, timeout=None)
 - `get_task_status(task_id)` - Get task execution output by task ID (`end_time` is `None` while running; failures are in `run_error`)
 - `wait_for_task(task_id, timeout=None, poll_interval=1.0)` - Poll until the task finishes and return its record
 
-> `wait=False` + `wait_for_task` needs an ivoryOS server that includes the background-task fix; on older servers (<= 1.6.12) use `wait=True`.
+> On current ivoryOS versions a `wait=False` task does not get its output recorded, so `wait_for_task` can't return it (and on <= 1.6.12 it never finishes). Use `wait=True` when you need the result.
 
 ### Workflow Script Operations
 
